@@ -1,0 +1,37 @@
+
+
+1. Compiled with problems: ERROR in ./src/features/todos/components/Form.jsx 8:0-40
+Module not found: Error: Can't resolve 'react-id-generator' in '/Users/yyy/Downloads/99/230309test/src/features/todos/components'
+-> resolve: > yarn add react-id-generator
+
+----------------------------------------------------------------------
+1. 추가하기 버튼을 클릭해도 추가한 아이템이 화면에 표시되지 않음.
+->Form Comp.의 onSubmitHandler에서 setTodo로 인풋을 초기화시키기 전에 dispatch로 보내야 함.
+->1) const dispatch = useDispatch(); 디스패치 만들고,
+->2) onSubmitHandler에서 setTodo 전에 dispatch(addTodo(todo)) 추가.
+
+2. 추가하기 버튼 클릭 후 기존에 존재하던 아이템들이 사라짐.
+-> 1) 리듀서에서 ADD_TODO 액션 return에 기존 todos들을 받지 않고 있음("todos: [action.payload]")
+-> 2) 기존 todos들을 추가 -> "todos: [...state.todos, action.payload]"
+
+3. 삭제 기능이 동작하지 않음.
+-> 리듀서 스위치 문에 DELETE_TODO가 없음.
+-> 1) DELETE_TODO 만듦,
+-> 2) nextId()를 통해 고유의 id를 받아오도록 Form Comp.를 수정
+-> 3) List Comp.가 todo.id를 DELETE_TODO 액션에 디스패칭하던 것을 todo를 디스패칭하도록 수정
+
+4. 상세 페이지에 진입 하였을 때 데이터가 업데이트 되지 않음.
+-> 에러: Detail.jsx:19 Uncaught TypeError: Cannot read properties of undefined (reading 'id')
+-> id를 못 가져오는데, 리듀서에서 getToDoByID를 활용해서 최대한 하려고 했으나 안 돼서
+-> 제 방식대로 getToDoByID를 지우고 Detail Comp안에서 같은 기능을 하는 detailTodo를 만들어 해결하였습니다.
+
+5. 완료된 카드의 상세 페이지에 진입 하였을 때 올바른 데이터를 불러오지 못함.
+-> detailTodo의 id를 불러오기에 실패했습니다.
+-> NextId()로 만들어지는 문자+숫자형의 id이기 때문에 
+-> parseInt()를 사용하면 불러올 수 있을 거라고 생각하고 접근하였는데 id를 불러오지 못합니다.
+-> (init todo의 아이디는 불러오기 때문에 init todo의 Detail route는 잘 찾아갑니다...)
+
+6. 취소 버튼 클릭시 기능이 작동하지 않음.
+-> 에러: Uncaught TypeError: Cannot read properties of undefined (reading 'isDone')
+-> TOGGLE_STATUS_TODO 리듀서의 else문이 isDone을 참조하고 있지 않고 있었음.
+-> 1) else 문에서 ...todo 받고, isDone: !todo.isDone 추가.
